@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  agent-service:
+    build: ./AgentService
+    ports:
+      - "4000:4000"
+
+  integration-service:
+    build: ./IntegrationService
+    ports:
+      - "4001:4001"
+
+  notification-service:
+    build: ./NotificationService
+    ports:
+      - "4004:4004"
+    env_file:
+      - .env
+    environment:
+      - EMAIL_USER=${EMAIL_USER}
+      - EMAIL_PASS=${EMAIL_PASS}
+
+  aggregator-service:
+    build: ./AggregatorService
+    ports:
+      - "4005:4005"
+
+  api-gateway:
+    build: ./api_gateway
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+
+volumes:
+  mongo_data:
